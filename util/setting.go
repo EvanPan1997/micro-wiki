@@ -6,9 +6,8 @@ import (
 )
 
 var (
-	AppMode   string
-	HttpPort  string
-	JwtSecret string
+	AppMode  string
+	HttpPort string
 )
 
 func init() {
@@ -22,5 +21,4 @@ func init() {
 func LoadServer(file *ini.File) {
 	AppMode = file.Section("Server").Key("RunMode").MustString("debug")
 	HttpPort = file.Section("Server").Key("HttpPort").MustString("8080")
-	JwtSecret = file.Section("Server").Key("JwtSecret").MustString("")
 }
