@@ -118,7 +118,7 @@ func JwtToken() gin.HandlerFunc {
 		wikiUser.UserId = userId
 		dbConn.Table("wiki_user").Select("password").Find(&wikiUser)
 		if tokenPayload.password != wikiUser.Password {
-			code = msg.ERROR
+			code = msg.REDIRECT
 			//密码已更改
 			c.Abort()
 		}
