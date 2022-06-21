@@ -26,8 +26,8 @@ type WikiUser struct {
 	LastAccessTime  string `gorm:"column:last_access_time"`
 	LastLogoutTime  string `gorm:"column:last_logout_time"`
 	LastFailTime    string `gorm:"column:last_fail_time"`
-	PswdErrCnt      string `gorm:"column:pswd_err_cnt"`
-	TotPswdErr      string `gorm:"column:tot_pswd_err"`
+	PswdErrCnt      int8   `gorm:"column:pswd_err_cnt"`
+	TotPswdErr      int8   `gorm:"column:tot_pswd_err"`
 	LastChgPswdTime string `gorm:"column:last_chg_pswd_time"`
 
 	Rsv1          string `gorm:"column:rsv1"`

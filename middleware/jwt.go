@@ -32,22 +32,22 @@ type TokenPayload struct {
 	author   string
 	iss      string
 	exp      int64
-	userId   string
+	userName string
 	password string
 }
 
 // 仅登录时, 下发token使用
-func GenerateToken(userId string, password string) (string, error) {
+func GenerateToken(userName string, password string) (string, error) {
 	header := TokenHeader{alg, typ}
-	payload := TokenPayload{author: author, iss: iss, exp: time.Now().AddDate(0, 0, 7).Unix(), userId: userId, password: password}
+	payload := TokenPayload{author: author, iss: iss, exp: time.Now().AddDate(0, 0, 7).Unix(), userName: userName, password: password}
 	headerJson, err := json.Marshal(header)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return "", err
 	}
 	payloadJson, err := json.Marshal(payload)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return "", err
 	}
 	headerBase64 := util.EncodeToBase64(headerJson)
@@ -109,13 +109,13 @@ func JwtToken() gin.HandlerFunc {
 			若存在但不一致, 密码被修改, 重定向
 			若不存在, 则账号被注销, 重定向
 		*/
-		userId := tokenPayload.userId
+		userName := tokenPayload.userName
 		dbConn, err := db.GetDbConnection()
 		if err != nil {
-			log.Fatalln(err)
+			log.Println(err)
 		}
 		var wikiUser user.WikiUser
-		wikiUser.UserId = userId
+		wikiUser.UserName = userName
 		dbConn.Table("wiki_user").Select("password").Find(&wikiUser)
 		if tokenPayload.password != wikiUser.Password {
 			code = msg.REDIRECT

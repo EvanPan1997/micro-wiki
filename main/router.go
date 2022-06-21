@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"micro-wiki/api/v1/user"
 )
 
 // 初始化路由
@@ -9,6 +10,8 @@ func InitRouter() *gin.Engine {
 	r := gin.Default()
 	// 处理请求, 规范返回的中间件
 
+	v1Group := r.Group("/api/v1")
+	v1Group.POST("/login", user.LoginService())
 	// 声明v1路由组
 	//v1Group := r.Group("/api/v1")
 	// 定义v1路由组的所有业务接口
