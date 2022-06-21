@@ -127,7 +127,6 @@ func JwtToken() gin.HandlerFunc {
 			"code":    code,
 			"message": msg.GetMsg(code),
 		})
-		//c.Set("username", key.Username)
 		c.Next()
 	}
 }
