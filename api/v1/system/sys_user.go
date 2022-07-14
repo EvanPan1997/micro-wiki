@@ -1,10 +1,13 @@
 package system
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"micro-wiki/model/common/response"
+)
 
-type SysUserApi struct {
+type UserApi struct {
 }
 
-func (s *SysUserApi) Register(ctx *gin.Context) {
-
+func (s *UserApi) Register(c *gin.Context) {
+	response.OkWithMessage("Register Success", c)
 }
