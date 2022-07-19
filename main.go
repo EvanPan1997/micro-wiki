@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+	gin.SetMode(gin.DebugMode)
 	r := gin.Default()
 	// 初始化路由
 	router.InitRoute(r)
