@@ -5,13 +5,18 @@ import (
 	"time"
 )
 
+var (
+	tpl = "20060102150405"
+)
+
+// 时间类型转字符串 yyyyMMddHHmmSS
 func TimeToString(t time.Time) string {
-	return t.Format("2006-01-02 15:04:05")
+	return t.Format(tpl)
 }
 
+// 字符串转时间类型
 func StringToTime(s string) time.Time {
-	template := "2006-01-02 15:04:05"
-	t, err := time.Parse(template, s)
+	t, err := time.Parse(tpl, s)
 	if err != nil {
 		log.Println(err)
 	}

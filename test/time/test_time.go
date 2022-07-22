@@ -16,6 +16,8 @@ func main() {
 
 	time := DateToTime(ts)
 	fmt.Println(time.Format("2006-01-02 15:04:05"))
+
+	fmt.Println(t.Format("20060102150405"))
 }
 
 func DateToUnix(str string) int64 {
@@ -34,4 +36,16 @@ func DateToTime(str string) time.Time {
 		fmt.Println(err)
 	}
 	return t
+}
+
+// int -> int64 -> string
+func UnixToTime(timestamp int) string {
+	t := time.Unix(int64(timestamp), 0)
+	return t.Format("2006-01-02 15:04:05")
+}
+
+// time -> int64
+func GetUnix() int64 {
+	return time.Now().Unix()
+
 }
