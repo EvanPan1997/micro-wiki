@@ -15,26 +15,26 @@ type WikiUser struct {
 	// 数据ID
 	DataID string `gorm:"primaryKey" column:"data_id"`
 	// 用户信息
-	UserID            string    `column:"user_id"`
-	Username          string    `column:"username"`
-	Password          string    `column:"password"`
-	RoleID            string    `column:"role_id"`
-	Status            string    `column:"status"`
-	IsLocked          string    `column:"is_locked"`
-	LastLoginTime     time.Time `column:"last_login_time"`
-	LastLogoutTime    time.Time `column:"last_logout_time"`
-	LoginIP           string    `column:"login_ip"`
-	PwdErrorCount     int       `column:"pwd_error_count"`
-	TotalPwdErr       int       `column:"total_pwd_err"`
-	LastChangePwdTime time.Time `column:"last_change_pwd_time"`
-	AccessToken       string    `column:"access_token"`
+	UserID            string `column:"user_id"`
+	Username          string `column:"username"`
+	Password          string `column:"password"`
+	RoleID            string `column:"role_id"`
+	Status            string `column:"status"`
+	IsLocked          string `column:"is_locked"`
+	LastLoginTime     string `column:"last_login_time"`
+	LastLogoutTime    string `column:"last_logout_time"`
+	LoginIP           string `column:"login_ip"`
+	PwdErrorCount     int    `column:"pwd_error_count"`
+	TotalPwdError     int    `column:"total_pwd_error"`
+	LastChangePwdTime string `column:"last_change_pwd_time"`
+	AccessToken       string `column:"access_token"`
 	// 系统维护信息
-	CreateUser string    `column:"create_user"`
-	CreateAt   time.Time `column:"create_at"`
-	ChangeUser string    `column:"change_user"`
-	ChangeAt   time.Time `column:"change_at"`
-	DeleteUser string    `column:"delete_user"`
-	DeleteAt   time.Time `column:"delete_at"`
+	CreateUser string `column:"create_user"`
+	CreateAt   string `column:"create_at"`
+	ChangeUser string `column:"change_user"`
+	ChangeAt   string `column:"change_at"`
+	DeleteUser string `column:"delete_user"`
+	DeleteAt   string `column:"delete_at"`
 	// 补充字段
 	remarks  string `column:"remarks"`
 	Reserve1 string `column:"reserve1"`
@@ -53,6 +53,7 @@ type RegisterReq struct {
 func (wikiUser *WikiUser) RegisterFormToWikiUser(c *gin.Context) {
 	// 提供hash值作为本结构体的id
 	ids := utils.GenUuidV4()
+	nowStr := utils.TimeToString(time.Now())
 
 	// bind json
 	var registerReq RegisterReq
@@ -71,12 +72,12 @@ func (wikiUser *WikiUser) RegisterFormToWikiUser(c *gin.Context) {
 	wikiUser.Status = "1"
 	wikiUser.IsLocked = "N"
 	wikiUser.PwdErrorCount = 0
-	wikiUser.TotalPwdErr = 0
+	wikiUser.TotalPwdError = 0
 
 	// 创建信息
 	wikiUser.CreateUser = registerReq.Operator
-	wikiUser.CreateAt = time.Now()
+	wikiUser.CreateAt = nowStr
 	// 修改信息
 	wikiUser.ChangeUser = registerReq.Operator
-	wikiUser.ChangeAt = time.Now()
+	wikiUser.ChangeAt = nowStr
 }

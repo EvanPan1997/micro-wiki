@@ -1,4 +1,4 @@
-create table wiki_user
+create table wiki_users
 (
     data_id              VARCHAR(64) primary key,
 
@@ -18,7 +18,7 @@ create table wiki_user
 
     create_user          VARCHAR(64),
     create_at            DATETIME,
-    changeUser           VARCHAR(64),
+    change_user          VARCHAR(64),
     change_at            DATETIME,
     delete_user          VARCHAR(64),
     delete_at            DATETIME,

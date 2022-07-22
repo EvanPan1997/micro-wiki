@@ -2,6 +2,7 @@ package system
 
 import (
 	"github.com/gin-gonic/gin"
+	"micro-wiki/global"
 	"micro-wiki/model/common/response"
 	"micro-wiki/model/system"
 )
@@ -14,5 +15,8 @@ func (s *UserApi) Register(c *gin.Context) {
 	var wikiUser *system.WikiUser = new(system.WikiUser)
 	wikiUser.RegisterFormToWikiUser(c)
 
-	response.OkWithDetail(wikiUser, "Register Success", c)
+	db := global.MW_DB
+	db.Table("wiki_user").Create(&wikiUser)
+
+	response.OkWithMessage("Register Success", c)
 }

@@ -1,0 +1,14 @@
+# server configuration
+server:
+  db-type: "mysql"
+
+# db configuration
+mysql:
+  username: "root"
+  password: "Evan123!"
+  address: "127.0.0.1"
+  port: "3306"
+  dbname: "micro_wiki"
+  config: ""
+
+
