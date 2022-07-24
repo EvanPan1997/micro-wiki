@@ -18,7 +18,7 @@ func (r *UserRouter) InitUserRouter(router *gin.RouterGroup) {
 		userGroup.POST("/changePassword") // 用户修改密码
 		userGroup.POST("/resetPassword")  // 管理员重置用户密码
 
-		userGroup.GET("/getUserInfo")  // 获取用户信息
-		userGroup.POST("/getUserList") // 管理员分页获取用户列表
+		userGroup.GET("/queryDetail", v1.ApiGroupApp.SystemApiGroup.QueryDetail) // 获取用户信息
+		userGroup.POST("/getUserList")                                           // 管理员分页获取用户列表
 	}
 }

@@ -37,7 +37,7 @@ func (s *UserApi) Register(c *gin.Context) {
 	return
 }
 
-func (s *UserApi) QueryUserDetail(c *gin.Context) {
+func (s *UserApi) QueryDetail(c *gin.Context) {
 	userId := c.Query("user_id")
 
 	// 确认是否有权限查询
@@ -58,6 +58,6 @@ func (s *UserApi) QueryUserDetail(c *gin.Context) {
 		return
 	}
 
-	response.OkWithMessage("Register Success", c)
+	response.OkWithMessage("Query Success", c)
 	return
 }
