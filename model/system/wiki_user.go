@@ -1,9 +1,7 @@
 package system
 
 import (
-	"github.com/gin-gonic/gin"
 	"micro-wiki/utils"
-	"net/http"
 	"time"
 )
 
@@ -50,18 +48,10 @@ type RegisterReq struct {
 }
 
 /* 将用户注册表单, 转换为WikiUser实例 */
-func (wikiUser *WikiUser) RegisterFormToWikiUser(c *gin.Context) {
+func (wikiUser *WikiUser) RegisterFormToWikiUser(registerReq *RegisterReq) {
 	// 提供hash值作为本结构体的id
 	ids := utils.GenUuidV4()
 	nowStr := utils.TimeToString(time.Now())
-
-	// bind json
-	var registerReq RegisterReq
-	if err := c.BindJSON(&registerReq); err != nil {
-		c.AbortWithStatusJSON(
-			http.StatusInternalServerError,
-			gin.H{"error": err.Error()})
-	}
 
 	// 基本信息
 	wikiUser.DataID = ids

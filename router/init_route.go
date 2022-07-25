@@ -8,6 +8,7 @@ import (
 
 func InitRoute(r *gin.Engine) {
 	// 初始化路由
+	// 跨域问题中间件
 	r.Use(common.Cors())
 	v1 := r.Group("/v1")
 

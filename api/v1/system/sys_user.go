@@ -6,15 +6,25 @@ import (
 	"micro-wiki/global"
 	"micro-wiki/model/common/response"
 	"micro-wiki/model/system"
+	"net/http"
 )
 
 type UserApi struct {
 }
 
-func (s *UserApi) Register(c *gin.Context) {
+// 注册用户
+func (api *UserApi) Register(c *gin.Context) {
+	// bind json
+	var registerReq system.RegisterReq
+	if err := c.BindJSON(&registerReq); err != nil {
+		c.AbortWithStatusJSON(
+			http.StatusInternalServerError,
+			gin.H{"error": err.Error()})
+	}
+
 	// 插入记录到wiki_user表中
 	var wikiUser *system.WikiUser = new(system.WikiUser)
-	wikiUser.RegisterFormToWikiUser(c)
+	wikiUser.RegisterFormToWikiUser(&registerReq)
 
 	db := global.MW_DB
 	// 查询是否有重复用户
@@ -30,6 +40,16 @@ func (s *UserApi) Register(c *gin.Context) {
 		return
 	}
 
+	// 查询操作员, 确认是否有权限进行操作
+	if registerReq.Operator != "system" {
+		var roleName string
+		db.Raw("SELECT r.role_name FROM wiki_role r,wiki_user u WHERE u.user_id = ? AND u.role_id = r.role_id", registerReq.Operator).Scan(&roleName)
+		if roleName == "Admin" {
+			response.FailWithMessage("无权限进行该操作", c)
+			return
+		}
+	}
+
 	// 插入数据库
 	db.Table("wiki_user").Create(&wikiUser)
 
@@ -37,7 +57,8 @@ func (s *UserApi) Register(c *gin.Context) {
 	return
 }
 
-func (s *UserApi) QueryDetail(c *gin.Context) {
+// 查询用户详细信息
+func (api *UserApi) QueryDetail(c *gin.Context) {
 	userId := c.Query("user_id")
 
 	// 确认是否有权限查询
@@ -60,4 +81,14 @@ func (s *UserApi) QueryDetail(c *gin.Context) {
 
 	response.OkWithMessage("Query Success", c)
 	return
+}
+
+// 用户修改密码
+func (api *UserApi) ChangePassword(c *gin.Context) {
+
+}
+
+// 管理员重置用户密码
+func (api *UserApi) ResetPassword(c *gin.Context) {
+
 }
