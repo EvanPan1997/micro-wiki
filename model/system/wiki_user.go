@@ -71,3 +71,9 @@ func (wikiUser *WikiUser) RegisterFormToWikiUser(registerReq *RegisterReq) {
 	wikiUser.ChangeUser = registerReq.Operator
 	wikiUser.ChangeAt = nowStr
 }
+
+type ChangePasswordReq struct {
+	UserID   string `form:"user_id" json:"user_id" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+	Operator string `form:"operator" json:"operator" binding:"required"`
+}

@@ -6,6 +6,7 @@ import (
 	"micro-wiki/global"
 	"micro-wiki/model/common/response"
 	"micro-wiki/model/system"
+	"micro-wiki/utils"
 	"net/http"
 )
 
@@ -20,18 +21,20 @@ func (api *UserApi) Register(c *gin.Context) {
 		c.AbortWithStatusJSON(
 			http.StatusInternalServerError,
 			gin.H{"error": err.Error()})
+		return
 	}
 
-	// 插入记录到wiki_user表中
+	// 创建结构体实例, 并加入初始数据
 	var wikiUser *system.WikiUser = new(system.WikiUser)
 	wikiUser.RegisterFormToWikiUser(&registerReq)
-
+	// 插入记录到wiki_user表中
 	db := global.MW_DB
 	// 查询是否有重复用户
 	result := db.Table("wiki_user").Take(&system.WikiUser{Username: wikiUser.Username})
 	if result.Error != nil {
 		log.Println(result.Error)
-		response.FailWithMessage("用户注册失败", c)
+		response.FailWithMessage("数据库查询错误", c)
+		return
 	}
 	if result.RowsAffected > 0 {
 		log.Printf("用户:%s, 已存在", wikiUser.Username)
@@ -61,8 +64,6 @@ func (api *UserApi) Register(c *gin.Context) {
 func (api *UserApi) QueryDetail(c *gin.Context) {
 	userId := c.Query("user_id")
 
-	// 确认是否有权限查询
-
 	// 查询用户信息
 	db := global.MW_DB
 	var wikiUser system.WikiUser
@@ -71,6 +72,7 @@ func (api *UserApi) QueryDetail(c *gin.Context) {
 	if result.Error != nil {
 		log.Println(result.Error)
 		response.FailWithMessage("用户查询失败", c)
+		return
 	}
 	// 判断是否查到用户
 	if result.RowsAffected == 0 {
@@ -85,7 +87,42 @@ func (api *UserApi) QueryDetail(c *gin.Context) {
 
 // 用户修改密码
 func (api *UserApi) ChangePassword(c *gin.Context) {
+	// bind json
+	var changePasswordReq system.ChangePasswordReq
+	if err := c.BindJSON(&changePasswordReq); err != nil {
+		c.AbortWithStatusJSON(
+			http.StatusInternalServerError,
+			gin.H{"error": err.Error()})
+		return
+	}
 
+	if changePasswordReq.UserID != changePasswordReq.Operator {
+		response.FailWithMessage("不能修改他人的密码", c)
+		return
+	}
+
+	var wikiUser system.WikiUser
+	db := global.MW_DB
+	result := db.Table("wiki_user").Find(&wikiUser, changePasswordReq.UserID)
+	if result.Error != nil {
+		log.Println(result.Error)
+		response.FailWithMessage("数据库查询错误", c)
+		return
+	}
+
+	if result.RowsAffected == 0 {
+		response.FailWithMessage("该用户不存在", c)
+		return
+	} else if result.RowsAffected == 1 {
+		wikiUser.Password = utils.BcryptHash(changePasswordReq.Password)
+		db.Table("wiki_user").Save(&wikiUser)
+		response.OkWithMessage("密码修改成功", c)
+		return
+	} else {
+		log.Printf("[平台异常]-该用户: %s, 查询结果不为0也不为1")
+		response.FailWithMessage("数据异常", c)
+		return
+	}
 }
 
 // 管理员重置用户密码
