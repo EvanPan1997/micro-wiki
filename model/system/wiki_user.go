@@ -42,6 +42,7 @@ type WikiUser struct {
 	Reserve5 string `column:"reserve5"`
 }
 
+// 注册表单结构体
 type RegisterReq struct {
 	Username string `form:"username" json:"username" binding:"required"`
 	Operator string `form:"operator" json:"operator" binding:"required"`
@@ -72,8 +73,20 @@ func (wikiUser *WikiUser) RegisterFormToWikiUser(registerReq *RegisterReq) {
 	wikiUser.ChangeAt = nowStr
 }
 
+// 修改密码表单结构体
 type ChangePasswordReq struct {
 	UserID   string `form:"user_id" json:"user_id" binding:"required"`
 	Password string `form:"password" json:"password" binding:"required"`
 	Operator string `form:"operator" json:"operator" binding:"required"`
+}
+
+// 重置密码表单结构体
+type ResetPasswordReq struct {
+	UserID   string `form:"user_id" json:"user_id" binding:"required"`
+	Operator string `form:"operator" json:"operator" binding:"required"`
+}
+
+// 重置密码函数
+func (wikiUser *WikiUser) ResetPassword() {
+	wikiUser.Password = utils.BcryptHash(InitPassword)
 }

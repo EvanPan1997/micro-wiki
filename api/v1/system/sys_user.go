@@ -57,7 +57,6 @@ func (api *UserApi) Register(c *gin.Context) {
 	db.Table("wiki_user").Create(&wikiUser)
 
 	response.OkWithMessage("Register Success", c)
-	return
 }
 
 // 查询用户详细信息
@@ -82,7 +81,6 @@ func (api *UserApi) QueryDetail(c *gin.Context) {
 	}
 
 	response.OkWithMessage("Query Success", c)
-	return
 }
 
 // 用户修改密码
@@ -107,7 +105,6 @@ func (api *UserApi) ChangePassword(c *gin.Context) {
 	if result.Error != nil {
 		log.Println(result.Error)
 		response.FailWithMessage("数据库查询错误", c)
-		return
 	}
 
 	if result.RowsAffected == 0 {
@@ -117,15 +114,45 @@ func (api *UserApi) ChangePassword(c *gin.Context) {
 		wikiUser.Password = utils.BcryptHash(changePasswordReq.Password)
 		db.Table("wiki_user").Save(&wikiUser)
 		response.OkWithMessage("密码修改成功", c)
-		return
 	} else {
 		log.Printf("[平台异常]-该用户: %s, 查询结果不为0也不为1")
 		response.FailWithMessage("数据异常", c)
-		return
 	}
 }
 
 // 管理员重置用户密码
 func (api *UserApi) ResetPassword(c *gin.Context) {
+	// bind json
+	var resetPasswordReq system.ResetPasswordReq
+	if err := c.BindJSON(&resetPasswordReq); err != nil {
+		c.AbortWithStatusJSON(
+			http.StatusInternalServerError,
+			gin.H{"error": err.Error()})
+		return
+	}
+	// 确认操作者权限权限
+	if resetPasswordReq.Operator != "admin" {
+		response.FailWithMessage("权限不足", c)
+	}
 
+	var wikiUser system.WikiUser
+	db := global.MW_DB
+	result := db.Table("wiki_user").Find(&wikiUser, resetPasswordReq.UserID)
+	if result.Error != nil {
+		log.Println(result.Error)
+		response.FailWithMessage("数据库查询错误", c)
+		return
+	}
+
+	// ResetPassword
+	if result.RowsAffected == 0 {
+		response.FailWithMessage("该用户不存在", c)
+	} else if result.RowsAffected == 1 {
+		wikiUser.ResetPassword()
+		db.Table("wiki_user").Save(&wikiUser)
+		response.OkWithMessage("密码重置成功", c)
+	} else {
+		log.Printf("[平台异常]-该用户: %s, 查询结果不为0也不为1")
+		response.FailWithMessage("数据异常", c)
+	}
 }
